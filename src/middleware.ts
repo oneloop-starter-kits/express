@@ -1,22 +1,12 @@
-import * as oneloop from "@oneloop-hq/oneloop-ts";
+import { OneloopApiClient } from "@oneloop-hq/oneloop-ts";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 
 dotenv.config();
 
-const oneloopClient = new oneloop.DefaultApi(
-  oneloop.createConfiguration({
-    authMethods: {
-      bearerAuth: {
-        tokenProvider: {
-          getToken: async () => {
-            return "Bearer " + process.env.ONELOOP_KEY;
-          },
-        },
-      },
-    },
-  })
-);
+const oneloopClient = new OneloopApiClient({
+  token: process.env.ONELOOP_KEY ?? "",
+});
 
 export const oneloopMiddleware = (
   scopes: {
