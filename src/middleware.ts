@@ -23,6 +23,17 @@ export const oneloopMiddleware = (config?: {
 }) => {
   return async (req: Request, res: Response, next: () => any) => {
     try {
+      let originalPattern = req.route?.path as string | undefined;
+      console.log("originalPattern", originalPattern);
+      if (!originalPattern) {
+        originalPattern = req.app._router.stack.find((layer: any) => {
+          if (layer.route) {
+            return layer.route.path === req.path;
+          }
+          return false;
+        })?.route?.path;
+      }
+
       const isValidKey = await oneloopClient.verifyApiKey({
         key: req.headers.authorization?.replace("Bearer ", "") ?? "",
         requestedScopes:
@@ -43,6 +54,7 @@ export const oneloopMiddleware = (config?: {
               id: config.usage.id,
             }
           : undefined,
+        route: originalPattern,
       });
 
       if (isValidKey && isValidKey.status === "VALID") {
