@@ -7,12 +7,9 @@ const port = process.env.PORT || 3000;
 
 app.get(
   "/",
-  oneloopMiddleware([
-    {
-      id: "users",
-      read: true,
-    },
-  ]),
+  oneloopMiddleware({
+    usage: { value: 2, id: "test_id" },
+  }),
   getUsers
 );
 
